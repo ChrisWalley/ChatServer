@@ -17,12 +17,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author Christopher
  */
-public class ClientUI extends JFrame
-  {
+public class ClientUI extends JFrame {
 
     private static BufferedReader in;
     private static PrintWriter out;
@@ -31,24 +31,20 @@ public class ClientUI extends JFrame
     private static ClientUI mainWindow;
     private static boolean running = true;
 
-    public ClientUI(String[] IPandUser) throws IOException
-      {
+    public ClientUI(String[] IPandUser) throws IOException {
         initComponents();
 
         // Add Listeners
-        txfInput.addActionListener(new ActionListener()
-          {
-            public void actionPerformed(ActionEvent e)
-              {
+        txfInput.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 out.println(txfInput.getText());
                 txfInput.setText("");
-              }
-          });
+            }
+        });
         start(IPandUser);
-      }
+    }
 
-    private String getUserName()
-      {
+    private String getUserName() {
 
         name = JOptionPane.showInputDialog(
                 this,
@@ -57,69 +53,58 @@ public class ClientUI extends JFrame
                 JOptionPane.PLAIN_MESSAGE);
         System.out.println("Connected as: " + name);
         return name;
-      }
+    }
 
-    private void start(String[] IPandUser) throws IOException
-      {
-        
-            serverIP = IPandUser[0];
-            name = IPandUser[1];
-            this.setVisible(true);
+    private void start(String[] IPandUser) throws IOException {
 
-            //Socket socket = new Socket("45.222.15.224", 9001);
-            Socket socket = new Socket(serverIP, 9001);
+        serverIP = IPandUser[0];
+        name = IPandUser[1];
+        this.setVisible(true);
 
-            System.out.println("Connecting to: " + serverIP);
-            in = new BufferedReader(new InputStreamReader(
-                    socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+        //Socket socket = new Socket("45.222.15.224", 9001);
+        Socket socket = new Socket(serverIP, 9001);
 
-            // Process all messages from server, according to the protocol.
-            int counter = 0;
-            try
-              {
-                while (running)
-                  {
-                    String line = in.readLine();
-                    if (line.startsWith("SUBMITNAME") && running)
-                      {
-                        if (counter == 0)
-                          {
-                            out.println(name);
-                            counter++;
-                          } else
-                          {
-                            out.println(getUserName());
-                          }
+        System.out.println("Connecting to: " + serverIP);
+        in = new BufferedReader(new InputStreamReader(
+                socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
 
-                      } else if (line.startsWith("NAMEACCEPTED") && running)
-                      {
-                        counter = 0;
-                        txfInput.setEditable(true);
-                        txfInput.requestFocus();
-                        this.setTitle("Sup Bitch. Speaking as: " + name + "@" + serverIP);
-                      } else if (line.startsWith("MESSAGE") && running)
-                      {
-                        
-                        line = emojiFilter(line);
-                        
-                        if (!line.substring(line.lastIndexOf("@") + 1, line.length()).equals(name))
-                          {
-                            Toolkit.getDefaultToolkit().beep();
-                            txaMain.setText(txaMain.getText() + line.substring(line.lastIndexOf("@") + 1, line.length()) + ": " + line.substring(8, line.lastIndexOf("@")) + "\n");
-                          } else
-                          {
-                            txaMain.setText(txaMain.getText() + "Me: " + line.substring(8, line.lastIndexOf("@")) + "\n");
-                          }
-                      }
-                  }
-              } catch (NullPointerException e)
-              {
-                System.out.println(e);
-              }
+        // Process all messages from server, according to the protocol.
+        int counter = 0;
+        try {
+            while (running) {
+                String line = in.readLine();
+                if (line.startsWith("SUBMITNAME") && running) {
+                    if (counter == 0) {
+                        out.println(name);
+                        counter++;
+                    } else {
+                        out.println(getUserName());
+                    }
 
+                } else if (line.startsWith("NAMEACCEPTED") && running) {
+                    counter = 0;
+                    txfInput.setEditable(true);
+                    txfInput.requestFocus();
+                    this.setTitle("Speaking as: " + name + "@" + serverIP);
+                } else if (line.startsWith("MESSAGE") && running) {
 
-      }
+                    line = emojiFilter(line);
+
+                    if (!line.substring(line.lastIndexOf("@") + 1, line.length()).equals(name)) {
+                        Toolkit.getDefaultToolkit().beep();
+                        txaMain.setText(txaMain.getText() + line.substring(line.lastIndexOf("@") + 1, line.length()) + ": " + line.substring(8, line.lastIndexOf("@")) + "\n");
+                    } else {
+                        txaMain.setText(txaMain.getText() + "Me: " + line.substring(8, line.lastIndexOf("@")) + "\n");
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+            System.out.println(e);
+        }
+
+    }
+//41.169.79.137
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -242,32 +227,34 @@ public class ClientUI extends JFrame
         EmojiHelpUI.startUI();        // TODO add your handling code here:
     }//GEN-LAST:event_btnEmojiHelpActionPerformed
 
-    
-    public static String emojiFilter(String line)
-      {
+    public static String emojiFilter(String line) {
         String s = line.toLowerCase();
-        
+
         String Ejoy = "😂";
         String EmidFing = "🖕";
         String ErollEyes = "🙄";
         String Efire = "🔥";
-        
+
         String joy = ":joy:";
         String midFing = ":midfing:";
         String rollEyes = ":rolleyes:";
         String fire = ":fire:";
-        
-        if(s.contains(joy))
-            line = line.substring(0, s.indexOf(joy)) + Ejoy + line.substring(s.indexOf(joy)+joy.length(), s.length());
-        if(s.contains(midFing))
-            line = line.substring(0, s.indexOf(midFing)) + EmidFing + line.substring(s.indexOf(midFing)+midFing.length(), s.length());
-        if(s.contains(rollEyes))
-            line = line.substring(0, s.indexOf(rollEyes)) + ErollEyes + line.substring(s.indexOf(rollEyes)+rollEyes.length(), s.length());
-        if(s.contains(fire))
-            line = line.substring(0, s.indexOf(fire)) + Efire + line.substring(s.indexOf(fire)+fire.length(), s.length());
-        
+
+        if (s.contains(joy)) {
+            line = line.substring(0, s.indexOf(joy)) + Ejoy + line.substring(s.indexOf(joy) + joy.length(), s.length());
+        }
+        if (s.contains(midFing)) {
+            line = line.substring(0, s.indexOf(midFing)) + EmidFing + line.substring(s.indexOf(midFing) + midFing.length(), s.length());
+        }
+        if (s.contains(rollEyes)) {
+            line = line.substring(0, s.indexOf(rollEyes)) + ErollEyes + line.substring(s.indexOf(rollEyes) + rollEyes.length(), s.length());
+        }
+        if (s.contains(fire)) {
+            line = line.substring(0, s.indexOf(fire)) + Efire + line.substring(s.indexOf(fire) + fire.length(), s.length());
+        }
+
         return line;
-      }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem btnChangeName;
@@ -280,4 +267,4 @@ public class ClientUI extends JFrame
     private javax.swing.JTextArea txaMain;
     protected javax.swing.JTextField txfInput;
     // End of variables declaration//GEN-END:variables
-  }
+}

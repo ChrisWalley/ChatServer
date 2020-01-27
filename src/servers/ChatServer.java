@@ -53,13 +53,13 @@ public class ChatServer
     private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
 
     /**
-     * The appplication main method, which just listens on a port and spawns
+     * The application main method, which just listens on a port and spawns
      * handler threads.
      */
     public void startServer() throws Exception
       {
         System.out.println("Sup Bitch.");
-        System.out.println("Hosting on " + InetAddress.getLocalHost());
+        System.out.println("Hosting on " + InetAddress.getLocalHost()+":"+PORT);
         ServerSocket listener = new ServerSocket(PORT);
         try
           {
